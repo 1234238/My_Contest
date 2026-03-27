@@ -1,0 +1,110 @@
+taac2026:
+    data_format: csv
+    data_root: ../../data/TAAC/datasets/taac_fuxictr.csv
+    feature_cols:
+    # === meta ===
+    - {active: true, dtype: str, name: user_id, type: meta}
+    - {active: true, dtype: int, name: item_id, type: meta}
+    - {active: true, dtype: int, name: timestamp, type: meta}
+
+    # === item_feature: int_value ===
+    -   active: true
+        dtype: str
+        name: [item_feature6, item_feature7, item_feature8, item_feature9,
+               item_feature10, item_feature11, item_feature12, item_feature13,
+               item_feature15, item_feature16, item_feature75,
+               item_feature77, item_feature78, item_feature79]
+        type: categorical
+
+    # === item_feature: float_value ===
+    - {active: true, dtype: float, name: item_feature17, type: numeric}
+
+    # === item_feature: int_array ===
+    - {active: true, dtype: str, max_len: 50, name: item_feature14, padding: pre, splitter: ^, type: sequence}
+
+    # === user_feature: int_value ===
+    -   active: true
+        dtype: str
+        name: [user_feature1, user_feature3, user_feature4, user_feature50,
+               user_feature51, user_feature52, user_feature55, user_feature56,
+               user_feature57, user_feature58, user_feature59, user_feature60,
+               user_feature61, user_feature62, user_feature63, user_feature64,
+               user_feature65, user_feature66, user_feature76, user_feature80,
+               user_feature82, user_feature86, user_feature87, user_feature88,
+               user_feature89, user_feature90, user_feature91, user_feature92,
+               user_feature93, user_feature94, user_feature95, user_feature96,
+               user_feature97, user_feature98, user_feature99, user_feature100,
+               user_feature101, user_feature102, user_feature103, user_feature104,
+               user_feature105]
+        type: categorical
+
+    # === user_feature: int_array ===
+    -   active: true
+        dtype: str
+        max_len: 50
+        padding: pre
+        splitter: ^
+        name: [user_feature5, user_feature18, user_feature53, user_feature54,
+               user_feature67, user_feature74]
+        type: sequence
+
+    # === user_feature: float_array ===
+    - {active: true, dtype: float, max_len: 50, name: user_feature68, padding: pre, splitter: ^, type: sequence}
+    - {active: true, dtype: float, max_len: 50, name: user_feature81, padding: pre, splitter: ^, type: sequence}
+
+    # === user_feature: int_array_and_float_array (拆成两列) ===
+    -   active: true
+        dtype: str
+        max_len: 50
+        padding: pre
+        splitter: ^
+        name: [user_feature69_int, user_feature70_int, user_feature71_int,
+               user_feature72_int, user_feature73_int, user_feature83_int,
+               user_feature84_int, user_feature85_int]
+        type: sequence
+    -   active: true
+        dtype: float
+        max_len: 50
+        padding: pre
+        splitter: ^
+        name: [user_feature69_float, user_feature70_float, user_feature71_float,
+               user_feature72_float, user_feature73_float, user_feature83_float,
+               user_feature84_float, user_feature85_float]
+        type: sequence
+
+    # === seq_feature: action_seq ===
+    -   active: true
+        dtype: str
+        max_len: 50
+        padding: pre
+        splitter: ^
+        name: [action_seq19, action_seq20, action_seq21, action_seq22, action_seq23,
+               action_seq24, action_seq25, action_seq26, action_seq27, action_seq28]
+        type: sequence
+
+    # === seq_feature: content_seq ===
+    -   active: true
+        dtype: str
+        max_len: 50
+        padding: pre
+        splitter: ^
+        name: [content_seq40, content_seq41, content_seq42, content_seq43, content_seq44,
+               content_seq45, content_seq46, content_seq47, content_seq48]
+        type: sequence
+
+    # === seq_feature: item_seq ===
+    -   active: true
+        dtype: str
+        max_len: 50
+        padding: pre
+        splitter: ^
+        name: [item_seq29, item_seq30, item_seq31, item_seq32, item_seq33,
+               item_seq34, item_seq35, item_seq36, item_seq37, item_seq38,
+               item_seq39, item_seq49]
+        type: sequence
+
+    label_col: {dtype: float, name: label}
+    min_categr_count: 1
+    test_data: ../../data/TAAC/datasets/taac_fuxictr.csv
+    train_data: ../../data/TAAC/datasets/taac_fuxictr.csv
+    valid_data: ../../data/TAAC/datasets/taac_fuxictr.csv

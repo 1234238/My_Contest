@@ -1,0 +1,54 @@
+DIN_taac2026:
+    attention_dropout: 0
+    attention_hidden_activations: ReLU
+    attention_hidden_units: [512, 256]
+    attention_output_activation: null
+    batch_norm: false
+    batch_size: 512                        # 样本只有1000条，batch_size改小
+    dataset_id: taac2026
+    debug_mode: false
+
+    # === DIN 核心：序列场和目标场对应关系 ===
+    # 用 item_seq 对应 item 特征做 attention
+    din_sequence_field: !!python/tuple [item_seq29, item_seq30, item_seq31, item_seq32,
+                                        item_seq33, item_seq34, item_seq35, item_seq36,
+                                        item_seq37, item_seq38, item_seq39, item_seq49]
+    din_target_field: !!python/tuple   [item_feature6, item_feature7, item_feature8, item_feature9,
+                                        item_feature10, item_feature11, item_feature12, item_feature13,
+                                        item_feature15, item_feature16, item_feature75, item_feature14]
+    din_use_softmax: false
+
+    dnn_activations: relu
+    dnn_hidden_units: [256, 128, 64]      # 样本少，网络改小
+    early_stop_patience: 2
+    embedding_dim: 16                     # 样本少，embedding_dim改小
+    embedding_regularizer: 1.0e-04        # 样本少，正则加大
+    epochs: 100
+    eval_interval: 1
+
+    feature_specs:
+    -   feature_encoder: null
+        name: [item_seq29, item_seq30, item_seq31, item_seq32,
+               item_seq33, item_seq34, item_seq35, item_seq36,
+               item_seq37, item_seq38, item_seq39, item_seq49]
+
+    group_id: user_id                     # taobaoad用的group_id，这里直接用user_id
+    learning_rate: 0.001
+    loss: binary_crossentropy
+    metrics: [AUC, logloss]              # 样本少去掉gAUC，或保留看情况
+    model: DIN
+    model_id: DIN_taac2026
+    model_root: ./checkpoints/DIN_taac2026/
+    monitor: {AUC: 1}
+    monitor_mode: max
+    net_dropout: 0.1                      # 加一点dropout防过拟合
+    net_regularizer: 0
+    num_workers: 3
+    optimizer: adam
+    ordered_features: null
+    pickle_feature_encoder: true
+    save_best_only: true
+    seed: 20222023
+    shuffle: true
+    task: binary_classification
+    verbose: 1
