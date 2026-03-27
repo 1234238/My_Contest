@@ -74,11 +74,19 @@ class DIN(BaseModel):
              for target_field in self.din_target_field])
         
         dnn_input_dim = feature_map.sum_emb_out_dim()
+        din_sequence_fields = set()
         for sequence_field in self.din_sequence_field:
             for field in list(flatten([sequence_field])):
+                din_sequence_fields.add(field)
                 feature_spec = self.feature_map.features[field]
                 if feature_spec["type"] == "sequence" and not feature_spec.get("feature_encoder"):
                     dnn_input_dim += feature_spec.get("embedding_dim", self.embedding_dim)
+
+        for field, feature_spec in self.feature_map.features.items():
+            if feature_spec["type"] == "sequence" and not feature_spec.get("feature_encoder"):
+                if field not in din_sequence_fields:
+                    dnn_input_dim += feature_spec.get("embedding_dim", self.embedding_dim)
+
 
         self.dnn = MLP_Block(input_dim=dnn_input_dim,
                              output_dim=1,
@@ -109,15 +117,18 @@ class DIN(BaseModel):
                 feature_emb_dict[field] = field_emb
         
         if not have_seq:
-            feature_emb = self.embedding_layer.dict2tensor(feature_emb_dict, flatten_emb=True, have_unflatten_seq = False)
+            feature_emb, _ = self.embedding_layer.dict2tensor(
+                feature_emb_dict, flatten_emb=True, have_unflatten_seq=False
+            )
         else:
             feature_emb, seq_emb = self.embedding_layer.dict2tensor(feature_emb_dict, flatten_emb=True)
         
-        if seq_emb is not None and len(seq_emb) > 0:
+        if have_seq and seq_emb is not None and len(seq_emb) > 0:
             for seq_tensor in seq_emb:
                 # 对3维序列特征应用平均池化
                 # seq_tensor shape: [batch_size, seq_len, embed_dim]
                 # 计算平均值，忽略padding部分
+                # seq_tensor: [batch_size, seq_len, embed_dim]
                 seq_mask = (seq_tensor != 0).any(dim=-1)  # [batch_size, seq_len]
                 seq_mask_expanded = seq_mask.unsqueeze(-1).float()  # [batch_size, seq_len, 1]
                 
@@ -131,10 +142,9 @@ class DIN(BaseModel):
                 seq_pooled = seq_pooled / (seq_counts + 1e-8)  # 防止除零
                 
                 # 连接到主特征
+                seq_pooled = seq_pooled / (seq_counts + 1e-8)
                 feature_emb = torch.cat([feature_emb, seq_pooled], dim=-1)
                 print("seq_tensor.shape is ", seq_tensor.shape)
-                
-        
 
         y_pred = self.dnn(feature_emb)
         return_dict = {"y_pred": y_pred}
