@@ -110,8 +110,7 @@ checkpoints
 
 
 # 忽略数据集文件夹
-datasets/
-data/
+datasets
 *.zip
 *.tar
 *.gz
