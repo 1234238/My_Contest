@@ -72,7 +72,23 @@ class DIN(BaseModel):
                            dropout_rate=attention_dropout,
                            use_softmax=din_use_softmax)
              for target_field in self.din_target_field])
-        self.dnn = MLP_Block(input_dim=feature_map.sum_emb_out_dim(),
+        
+        dnn_input_dim = feature_map.sum_emb_out_dim()
+        din_sequence_fields = set()
+        for sequence_field in self.din_sequence_field:
+            for field in list(flatten([sequence_field])):
+                din_sequence_fields.add(field)
+                feature_spec = self.feature_map.features[field]
+                if feature_spec["type"] == "sequence" and not feature_spec.get("feature_encoder"):
+                    dnn_input_dim += feature_spec.get("embedding_dim", self.embedding_dim)
+
+        for field, feature_spec in self.feature_map.features.items():
+            if feature_spec["type"] == "sequence" and not feature_spec.get("feature_encoder"):
+                if field not in din_sequence_fields:
+                    dnn_input_dim += feature_spec.get("embedding_dim", self.embedding_dim)
+
+
+        self.dnn = MLP_Block(input_dim=dnn_input_dim,
                              output_dim=1,
                              hidden_units=dnn_hidden_units,
                              hidden_activations=dnn_activations,
@@ -83,9 +99,12 @@ class DIN(BaseModel):
         self.reset_parameters()
         self.model_to_device()
 
-    def forward(self, inputs):
+    def forward(self, inputs, have_seq = True):
         X = self.get_inputs(inputs)
         feature_emb_dict = self.embedding_layer(X)
+
+
+        print("feature_map is ", self.feature_map)
         for idx, (target_field, sequence_field) in enumerate(zip(self.din_target_field, 
                                                                  self.din_sequence_field)):
             target_emb = self.get_embedding(target_field, feature_emb_dict)
@@ -96,7 +115,37 @@ class DIN(BaseModel):
             for field, field_emb in zip(list(flatten([sequence_field])),
                                         pooling_emb.split(self.embedding_dim, dim=-1)):
                 feature_emb_dict[field] = field_emb
-        feature_emb = self.embedding_layer.dict2tensor(feature_emb_dict, flatten_emb=True)
+        
+        if not have_seq:
+            feature_emb, _ = self.embedding_layer.dict2tensor(
+                feature_emb_dict, flatten_emb=True, have_unflatten_seq=False
+            )
+        else:
+            feature_emb, seq_emb = self.embedding_layer.dict2tensor(feature_emb_dict, flatten_emb=True)
+        
+        if have_seq and seq_emb is not None and len(seq_emb) > 0:
+            for seq_tensor in seq_emb:
+                # 对3维序列特征应用平均池化
+                # seq_tensor shape: [batch_size, seq_len, embed_dim]
+                # 计算平均值，忽略padding部分
+                # seq_tensor: [batch_size, seq_len, embed_dim]
+                seq_mask = (seq_tensor != 0).any(dim=-1)  # [batch_size, seq_len]
+                seq_mask_expanded = seq_mask.unsqueeze(-1).float()  # [batch_size, seq_len, 1]
+                
+
+                # 应用mask
+                masked_seq = seq_tensor * seq_mask_expanded
+                
+                # 计算平均值
+                seq_pooled = torch.sum(masked_seq, dim=1)  # [batch_size, embed_dim]
+                seq_counts = torch.sum(seq_mask_expanded, dim=1)  # [batch_size, 1]
+                seq_pooled = seq_pooled / (seq_counts + 1e-8)  # 防止除零
+                
+                # 连接到主特征
+                seq_pooled = seq_pooled / (seq_counts + 1e-8)
+                feature_emb = torch.cat([feature_emb, seq_pooled], dim=-1)
+                print("seq_tensor.shape is ", seq_tensor.shape)
+
         y_pred = self.dnn(feature_emb)
         return_dict = {"y_pred": y_pred}
         return return_dict
