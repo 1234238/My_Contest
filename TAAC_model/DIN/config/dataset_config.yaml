@@ -76,14 +76,15 @@ taac2026_tiny:
 
 
         # # ─── 用户 int_array+float_array（sequence, 取ID部分）共 8 个 ─
-        # - {name: uf_69_float, active: True, dtype: float, type: embedding, pretrain_dim: 4}
-        # - {name: uf_85_float, active: True, dtype: float, type: embedding, pretrain_dim: 10}
-        # - {name: uf_83_float, active: True, dtype: float, type: embedding, pretrain_dim: 10}
-        # - {name: uf_70_float, active: True, dtype: float, type: embedding, pretrain_dim: 4}
-        # - {name: uf_72_float, active: True, dtype: float, type: embedding, pretrain_dim: 5}
-        # - {name: uf_84_float, active: True, dtype: float, type: embedding, pretrain_dim: 10}
-        # - {name: uf_71_float, active: True, dtype: float, type: embedding, pretrain_dim: 6}
-        # - {name: uf_73_float, active: True, dtype: float, type: embedding, pretrain_dim: 5}
+        - {name: uf_69_float, active: True, dtype: float, type: embedding, pretrain_dim: 4, embedding_dim: 4}
+        - {name: uf_85_float, active: True, dtype: float, type: embedding, pretrain_dim: 10, embedding_dim: 10}
+        - {name: uf_83_float, active: True, dtype: float, type: embedding, pretrain_dim: 10, embedding_dim: 10}
+        - {name: uf_70_float, active: True, dtype: float, type: embedding, pretrain_dim: 4, embedding_dim: 4}
+        - {name: uf_72_float, active: True, dtype: float, type: embedding, pretrain_dim: 5, embedding_dim: 5}
+        - {name: uf_84_float, active: True, dtype: float, type: embedding, pretrain_dim: 10, embedding_dim: 10}
+        - {name: uf_71_float, active: True, dtype: float, type: embedding, pretrain_dim: 6, embedding_dim: 6}
+        - {name: uf_73_float, active: True, dtype: float, type: embedding, pretrain_dim: 5, embedding_dim: 5}
+
 
         # # ─── 物品 int_value（categorical）共 14 个 ──────────────
         - {name: if_6,  active: True, dtype: str, type: categorical, embedding_dim: 8}

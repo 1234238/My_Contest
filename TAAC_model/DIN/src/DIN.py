@@ -88,7 +88,7 @@ class DIN(BaseModel):
                     dnn_input_dim += feature_spec.get("embedding_dim", self.embedding_dim)
 
 
-        self.dnn = MLP_Block(input_dim=dnn_input_dim,
+        self.dnn = MLP_Block(input_dim=624,
                              output_dim=1,
                              hidden_units=dnn_hidden_units,
                              hidden_activations=dnn_activations,
@@ -103,8 +103,6 @@ class DIN(BaseModel):
         X = self.get_inputs(inputs)
         feature_emb_dict = self.embedding_layer(X)
 
-
-        print("feature_map is ", self.feature_map)
         for idx, (target_field, sequence_field) in enumerate(zip(self.din_target_field, 
                                                                  self.din_sequence_field)):
             target_emb = self.get_embedding(target_field, feature_emb_dict)

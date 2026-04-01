@@ -94,12 +94,12 @@ class FeatureMap(object):
             feature_source = [feature_source]
         total_dim = 0
 
-        for feature, feature_spec in self.features.items():
-            if feature_spec["type"] == "sequence":
-                # 👉 请务必加上下面这一行，直接打印 feature 变量
-                print("========== 当前特征名称是:", feature, "==========")
-                print("debugging for fea", feature_spec.keys())
-                print(feature_spec)
+        # for feature, feature_spec in self.features.items():
+        #     if feature_spec["type"] == "sequence":
+        #         # 👉 请务必加上下面这一行，直接打印 feature 变量
+        #         print("========== 当前特征名称是:", feature, "==========")
+        #         print("debugging for fea", feature_spec.keys())
+        #         print(feature_spec)
 
         for feature, feature_spec in self.features.items():
             if feature_spec["type"] == "meta":

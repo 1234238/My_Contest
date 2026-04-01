@@ -164,12 +164,14 @@ class FeatureEmbeddingDict(nn.Module):
             if feature_type and not_in_whitelist(feature_spec["type"], feature_type):
                 continue
             if feature in embedding_dict:
-                # print("====", embedding_dict[feature].shape)
-                if have_unflatten_seq and len(embedding_dict[feature].shape) > 2:
-                    # print("====", embedding_dict[feature].shape)
-                    seq_emb_list.append(embedding_dict[feature])
-                else:
-                    feature_emb_list.append(embedding_dict[feature])
+                if "_float" in feature:  
+                    print("feature debugging is ", feature, embedding_dict[feature].shape)
+                    continue
+
+            if have_unflatten_seq and len(embedding_dict[feature].shape) > 2:
+                seq_emb_list.append(embedding_dict[feature])
+            else:
+                feature_emb_list.append(embedding_dict[feature])
         
         if have_unflatten_seq:
             feature_emb = torch.cat(feature_emb_list, dim=-1)
