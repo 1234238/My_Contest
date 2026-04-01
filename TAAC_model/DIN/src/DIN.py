@@ -144,7 +144,6 @@ class DIN(BaseModel):
                 # 连接到主特征
                 seq_pooled = seq_pooled / (seq_counts + 1e-8)
                 feature_emb = torch.cat([feature_emb, seq_pooled], dim=-1)
-                print("seq_tensor.shape is ", seq_tensor.shape)
 
         y_pred = self.dnn(feature_emb)
         return_dict = {"y_pred": y_pred}

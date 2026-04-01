@@ -154,6 +154,9 @@ class FeatureProcessor(object):
                 elif col["type"] == "sequence":
                     self.fit_sequence_col(col, col_series,
                                           min_categr_count=min_categr_count)
+                # elif col["type"] == "float_tensor":
+                #     self.fit_float_tensor_col(col, col_series,
+                #                           min_categr_count=min_categr_count)
                 else:
                     raise NotImplementedError("feature type={}".format(col["type"]))
         
@@ -162,6 +165,7 @@ class FeatureProcessor(object):
         for col in self.feature_cols:
             name = col["name"]
             if "pretrained_emb" in col:
+                print("===")
                 logging.info("Loading pretrained embedding: " + name)
                 if "pretrain_dim" in col:
                     self.feature_map.features[name]["pretrain_dim"] = col["pretrain_dim"]
@@ -333,6 +337,27 @@ class FeatureProcessor(object):
                                                 "oov_idx": tokenizer.vocab["__OOV__"],
                                                 "max_len": tokenizer.max_len,
                                                 "vocab_size": tokenizer.vocab_size()})
+        
+
+    # def fit_float_tensor_col(self, col, col_series):
+    #     name = col["name"]
+    #     feature_type = col["type"]
+    #     feature_source = col.get("source", "")
+
+    #     self.feature_map.features[name] = {"source": feature_source,
+    #                                        "type": feature_type}
+
+    #     splitter = col.get("splitter", "^")
+    #     na_value = col.get("fill_na", "")
+
+    #     tokenizer = Tokenizer(splitter=splitter, 
+    #                           na_value=na_value,
+    #                           remap=col.get("remap", True))
+
+    #     print(self.processor_dict)
+    #     self.processor_dict[name + "::tokenizer"] = tokenizer
+                
+
 
     def transform(self, ddf):
         logging.info("Transform feature columns to IDs...")
@@ -364,6 +389,8 @@ class FeatureProcessor(object):
                 elif feature_type == "sequence":
                     ddf[feature] = (self.processor_dict.get(feature + "::tokenizer")
                                     .encode_sequence(col_series))
+                elif feature_type == "float_tensor":
+                    continue
                 elif feature_type == "embedding":
                     continue
                 else:

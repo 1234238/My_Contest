@@ -166,7 +166,7 @@ class FeatureEmbeddingDict(nn.Module):
             if feature in embedding_dict:
                 # print("====", embedding_dict[feature].shape)
                 if have_unflatten_seq and len(embedding_dict[feature].shape) > 2:
-                    print("====", embedding_dict[feature].shape)
+                    # print("====", embedding_dict[feature].shape)
                     seq_emb_list.append(embedding_dict[feature])
                 else:
                     feature_emb_list.append(embedding_dict[feature])

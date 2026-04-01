@@ -74,7 +74,18 @@ taac2026_tiny:
         - {name: uf_84, active: True, dtype: str, type: sequence, splitter: "^", max_len: 20, padding: post, embedding_dim: 8}
         - {name: uf_85, active: True, dtype: str, type: sequence, splitter: "^", max_len: 20, padding: post, embedding_dim: 8}
 
-        # ─── 物品 int_value（categorical）共 14 个 ──────────────
+
+        # # ─── 用户 int_array+float_array（sequence, 取ID部分）共 8 个 ─
+        # - {name: uf_69_float, active: True, dtype: float, type: embedding, pretrain_dim: 4}
+        # - {name: uf_85_float, active: True, dtype: float, type: embedding, pretrain_dim: 10}
+        # - {name: uf_83_float, active: True, dtype: float, type: embedding, pretrain_dim: 10}
+        # - {name: uf_70_float, active: True, dtype: float, type: embedding, pretrain_dim: 4}
+        # - {name: uf_72_float, active: True, dtype: float, type: embedding, pretrain_dim: 5}
+        # - {name: uf_84_float, active: True, dtype: float, type: embedding, pretrain_dim: 10}
+        # - {name: uf_71_float, active: True, dtype: float, type: embedding, pretrain_dim: 6}
+        # - {name: uf_73_float, active: True, dtype: float, type: embedding, pretrain_dim: 5}
+
+        # # ─── 物品 int_value（categorical）共 14 个 ──────────────
         - {name: if_6,  active: True, dtype: str, type: categorical, embedding_dim: 8}
         - {name: if_7,  active: True, dtype: str, type: categorical, embedding_dim: 8}
         - {name: if_8,  active: True, dtype: str, type: categorical, embedding_dim: 4}
@@ -90,10 +101,10 @@ taac2026_tiny:
         - {name: if_78, active: True, dtype: str, type: categorical, embedding_dim: 4}
         - {name: if_79, active: True, dtype: str, type: categorical, embedding_dim: 4}
 
-        # ─── 物品 int_array（sequence）共 1 个 ──────────────────
+        # # ─── 物品 int_array（sequence）共 1 个 ──────────────────
         - {name: if_14, active: True, dtype: str, type: sequence, splitter: "^", max_len: 10, padding: post, embedding_dim: 8}
 
-        # ─── 行为序列 action_seq（sequence）共 10 个 ────────────
+        # # ─── 行为序列 action_seq（sequence）共 10 个 ────────────
         - {name: aseq_19, active: True, dtype: str, type: sequence, splitter: "^", max_len: 50, padding: pre, embedding_dim: 4, feature_encoder: null}
         - {name: aseq_20, active: True, dtype: str, type: sequence, splitter: "^", max_len: 50, padding: pre, embedding_dim: 8, feature_encoder: null}
         - {name: aseq_21, active: True, dtype: str, type: sequence, splitter: "^", max_len: 50, padding: pre, embedding_dim: 4, feature_encoder: null}
@@ -105,7 +116,7 @@ taac2026_tiny:
         - {name: aseq_27, active: True, dtype: str, type: sequence, splitter: "^", max_len: 50, padding: pre, embedding_dim: 4, feature_encoder: null}
         - {name: aseq_28, active: True, dtype: str, type: sequence, splitter: "^", max_len: 50, padding: pre, embedding_dim: 4, feature_encoder: null}
 
-        # # ─── 内容序列 content_seq（sequence）共 9 个 ────────────
+        # # # ─── 内容序列 content_seq（sequence）共 9 个 ────────────
         - {name: cseq_40, active: True, dtype: str, type: sequence, splitter: "^", max_len: 50, padding: pre, embedding_dim: 8, feature_encoder: null}
         - {name: cseq_41, active: True, dtype: str, type: sequence, splitter: "^", max_len: 50, padding: pre, embedding_dim: 8, feature_encoder: null}
         - {name: cseq_42, active: True, dtype: str, type: sequence, splitter: "^", max_len: 50, padding: pre, embedding_dim: 8, feature_encoder: null}
@@ -116,7 +127,7 @@ taac2026_tiny:
         - {name: cseq_47, active: True, dtype: str, type: sequence, splitter: "^", max_len: 50, padding: pre, embedding_dim: 8, feature_encoder: null}
         - {name: cseq_48, active: True, dtype: str, type: sequence, splitter: "^", max_len: 50, padding: pre, embedding_dim: 8, feature_encoder: null}
 
-        # ─── 历史物品序列 item_seq（sequence）共 12 个 ──────────
+        # # ─── 历史物品序列 item_seq（sequence）共 12 个 ──────────
         - {name: iseq_29, active: True, dtype: str, type: sequence, splitter: "^", max_len: 50, padding: pre, embedding_dim: 8, feature_encoder: null}
         - {name: iseq_30, active: True, dtype: str, type: sequence, splitter: "^", max_len: 50, padding: pre, embedding_dim: 8, feature_encoder: null, share_embedding: "if_6"}
         - {name: iseq_31, active: True, dtype: str, type: sequence, splitter: "^", max_len: 50, padding: pre, embedding_dim: 8, feature_encoder: null, share_embedding: "if_7"}
