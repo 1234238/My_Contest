@@ -152,10 +152,9 @@ class FeatureEmbeddingDict(nn.Module):
         else:
             return True
 
-    def dict2tensor(self, embedding_dict, flatten_emb=False, have_unflatten_seq = True, feature_list=[], feature_source=[],
+    def dict2tensor(self, embedding_dict, flatten_emb=False, feature_list=[], feature_source=[],
                     feature_type=[]):
         feature_emb_list = []
-        seq_emb_list = []
         for feature, feature_spec in self._feature_map.features.items():
             if feature_list and not_in_whitelist(feature, feature_list):
                 continue
@@ -164,24 +163,12 @@ class FeatureEmbeddingDict(nn.Module):
             if feature_type and not_in_whitelist(feature_spec["type"], feature_type):
                 continue
             if feature in embedding_dict:
-                if "_float" in feature:  
-                    print("feature debugging is ", feature, embedding_dict[feature].shape)
-                    continue
-
-            if have_unflatten_seq and len(embedding_dict[feature].shape) > 2:
-                seq_emb_list.append(embedding_dict[feature])
-            else:
                 feature_emb_list.append(embedding_dict[feature])
-        
-        if have_unflatten_seq:
+        if flatten_emb:
             feature_emb = torch.cat(feature_emb_list, dim=-1)
-        
         else:
-            if flatten_emb:
-                feature_emb = torch.cat(feature_emb_list, dim=-1)
-            else:
-                feature_emb = torch.stack(feature_emb_list, dim=1)
-        return feature_emb, seq_emb_list
+            feature_emb = torch.stack(feature_emb_list, dim=1)
+        return feature_emb
 
     def forward(self, inputs, feature_source=[], feature_type=[]):
         feature_emb_dict = OrderedDict()

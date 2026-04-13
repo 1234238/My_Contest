@@ -25,80 +25,27 @@ import pandas as pd
 import os
 
 
-def _to_float_vector(value, dim, splitter="^"):
-    if isinstance(value, np.ndarray):
-        vec = value.reshape(-1).astype(np.float32, copy=False)
-    elif isinstance(value, (list, tuple)):
-        vec = np.asarray(value, dtype=np.float32).reshape(-1)
-    elif value is None or (isinstance(value, float) and np.isnan(value)):
-        vec = np.array([], dtype=np.float32)
-    elif isinstance(value, str):
-        text = value.strip()
-        if text == "" or text.lower() == "nan":
-            vec = np.array([], dtype=np.float32)
-        else:
-            vec = np.asarray([x for x in text.split(splitter) if x != ""], dtype=np.float32)
-    else:
-        vec = np.asarray([value], dtype=np.float32)
-    out = np.zeros(dim, dtype=np.float32)
-    size = min(dim, vec.size)
-    if size > 0:
-        out[:size] = vec[:size]
-    return out
-
-
-def _to_int_vector(value, dim, splitter="^"):
-    if isinstance(value, np.ndarray):
-        vec = value.reshape(-1).astype(np.int64, copy=False)
-    elif isinstance(value, (list, tuple)):
-        vec = np.asarray(value, dtype=np.int64).reshape(-1)
-    elif value is None or (isinstance(value, float) and np.isnan(value)):
-        vec = np.array([], dtype=np.int64)
-    elif isinstance(value, str):
-        text = value.strip()
-        if text == "" or text.lower() == "nan":
-            vec = np.array([], dtype=np.int64)
-        else:
-            vec = np.asarray([x for x in text.split(splitter) if x != ""], dtype=np.int64)
-    else:
-        vec = np.asarray([value], dtype=np.int64)
-    out = np.zeros(dim, dtype=np.int64)
-    size = min(dim, vec.size)
-    if size > 0:
-        out[:size] = vec[:size]
-    return out
-
-
 class ParquetIterDataPipe(IterDataPipe):
     def __init__(self, data_blocks, feature_map):
         self.feature_map = feature_map
         self.data_blocks = data_blocks
-        self.all_cols = list(self.feature_map.features.keys()) + self.feature_map.labels
 
     def load_data(self, data_path):
         df = pd.read_parquet(data_path)
-        data_dict = {}
-        for col in self.all_cols:
-            spec = self.feature_map.features.get(col)
-            if spec is None:  # labels
-                data_dict[col] = df[col].to_numpy()
-                continue
-            feature_type = spec["type"]
-            if feature_type == "embedding":
-                dim = spec.get("pretrain_dim", 1)
-                data_dict[col] = np.vstack([_to_float_vector(v, dim) for v in df[col].to_list()])
-            elif feature_type == "sequence":
-                max_len = spec.get("max_len", 0)
-                data_dict[col] = np.vstack([_to_int_vector(v, max_len) for v in df[col].to_list()])
+        all_cols = list(self.feature_map.features.keys()) + self.feature_map.labels
+        data_arrays = []
+        for col in all_cols:
+            if df[col].dtype == "object":
+                array = np.array(df[col].to_list())
             else:
-                data_dict[col] = df[col].to_numpy()
-        return data_dict
+                array = df[col].to_numpy()
+            data_arrays.append(array)
+        return np.column_stack(data_arrays)
 
     def read_block(self, data_block):
-        data_dict = self.load_data(data_block)
-        num_rows = len(data_dict[self.all_cols[0]]) if self.all_cols else 0
-        for idx in range(num_rows):
-            yield {col: data_dict[col][idx] for col in self.all_cols}
+        darray = self.load_data(data_block)
+        for idx in range(darray.shape[0]):
+            yield darray[idx, :]
 
     def __iter__(self):
         worker_info = get_worker_info()
@@ -152,4 +99,9 @@ class BatchCollator(object):
         self.feature_map = feature_map
 
     def __call__(self, batch):
-        return default_collate(batch)
+        batch_tensor = default_collate(batch)
+        all_cols = list(self.feature_map.features.keys()) + self.feature_map.labels
+        batch_dict = dict()
+        for col in all_cols:
+            batch_dict[col] = batch_tensor[:, self.feature_map.get_column_index(col)]
+        return batch_dict

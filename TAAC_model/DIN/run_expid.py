@@ -39,8 +39,8 @@ if __name__ == '__main__':
     '''
     parser = argparse.ArgumentParser()
     parser.add_argument('--config', type=str, default='./config/', help='The config directory.')
-    parser.add_argument('--expid', type=str, default='DIN_taobaoad_x1', help='The experiment id to run.')
-    parser.add_argument('--gpu', type=int, default=3, help='The gpu index, -1 for cpu')
+    parser.add_argument('--expid', type=str, default='DeepFM_test', help='The experiment id to run.')
+    parser.add_argument('--gpu', type=int, default=-1, help='The gpu index, -1 for cpu')
     args = vars(parser.parse_args())
     
     experiment_id = args['expid']
@@ -52,27 +52,12 @@ if __name__ == '__main__':
 
     data_dir = os.path.join(params['data_root'], params['dataset_id'])
     feature_map_json = os.path.join(data_dir, "feature_map.json")
-    # if not os.path.exists(feature_map_json):
 
+        # Build feature_map and transform data
     feature_encoder = FeatureProcessor(**params)
     params["train_data"], params["valid_data"], params["test_data"] = \
         build_dataset(feature_encoder, **params)
-
-
-    # if not os.path.exists(feature_map_json):
-    #     feature_encoder = FeatureProcessor(**params)
-    #     params["train_data"], params["valid_data"], params["test_data"] = \
-    #         build_dataset(feature_encoder, **params)
-    # else:
-    #     # 【修复部分】：如果已经处理过，手动将路径指向处理后的数值型数据
-    #     logging.info("Found existing feature_map.json, skipping preprocessing...")
-    #     data_format = params.get("data_format", "parquet") # 默认取 parquet，如果在 yaml 里配置了 h5 则取 h5
-    #     params["train_data"] = os.path.join(data_dir, f"train.{data_format}")
-    #     params["valid_data"] = os.path.join(data_dir, f"valid.{data_format}")
-    #     if params.get("test_data", None):
-    #         params["test_data"] = os.path.join(data_dir, f"test.{data_format}")
-
-
+    
     feature_map = FeatureMap(params['dataset_id'], data_dir)
     feature_map.load(feature_map_json, params)
     logging.info("Feature specs: " + print_to_json(feature_map.features))

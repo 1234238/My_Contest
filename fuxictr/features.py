@@ -93,22 +93,9 @@ class FeatureMap(object):
         if type(feature_source) != list:
             feature_source = [feature_source]
         total_dim = 0
-
-        # for feature, feature_spec in self.features.items():
-        #     if feature_spec["type"] == "sequence":
-        #         # 👉 请务必加上下面这一行，直接打印 feature 变量
-        #         print("========== 当前特征名称是:", feature, "==========")
-        #         print("debugging for fea", feature_spec.keys())
-        #         print(feature_spec)
-
         for feature, feature_spec in self.features.items():
             if feature_spec["type"] == "meta":
                 continue
-
-            if feature_spec["type"] == "sequence":
-                if "feature_encoder" not in feature_spec or feature_spec["feature_encoder"] is None:
-                    continue 
-
             if len(feature_source) == 0 or feature_spec.get("source") in feature_source:
                 total_dim += feature_spec.get("emb_output_dim",
                                               feature_spec.get("embedding_dim", 
