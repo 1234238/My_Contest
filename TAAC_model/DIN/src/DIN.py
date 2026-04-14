@@ -93,8 +93,6 @@ class DIN(BaseModel):
             seq_field = list(flatten([sequence_field]))[0] # flatten nested list to pick the first sequence field
             
             mask = X[seq_field].long() != 0 # padding_idx = 0 required
-            print("sequence_field is ", sequence_field)
-            print("sequence_emb shape is ", target_emb.shape, sequence_emb.shape)
             pooling_emb = self.attention_layers[idx](target_emb, sequence_emb, mask)
             for field, field_emb in zip(list(flatten([sequence_field])),
                                         pooling_emb.split(self.embedding_dim, dim=-1)):

@@ -52,11 +52,9 @@ class DIN_Attention(nn.Module):
         mask: mask of history_sequence, 0 for masked positions
         """
 
-        print("innner shape :", target_item.shape, history_sequence.shape)
         seq_len = history_sequence.size(1)
         target_item = target_item.unsqueeze(1).expand(-1, seq_len, -1)
 
-        print("outer shape :", target_item.shape, history_sequence.shape)
         attention_input = torch.cat([target_item, history_sequence, target_item - history_sequence, 
                                      target_item * history_sequence], dim=-1) # b x len x 4*emb
         attention_weight = self.attention_layer(attention_input.view(-1, 4 * self.embedding_dim))

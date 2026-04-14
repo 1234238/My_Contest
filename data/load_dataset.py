@@ -168,17 +168,8 @@ def main():
     vc = df["label_type"].value_counts().sort_index()
     print(f"  label_type:\n{vc.to_string()}")
 
-    int_vals = set(int(v) for v in df["label_type"].dropna().unique())
-    if int_vals <= {0, 1}:
-        label_arr = df["label_type"].astype("float32").values
-        print("  → already 0/1")
-    elif int_vals == {1, 2}:
-        label_arr = (df["label_type"].astype(int) == 1).astype("float32").values
-        print("  → 1→pos, 2→neg")
-    else:
-        label_arr = (df["label_type"].astype(int) >= 2).astype("float32").values
-        print(f"  → binarized >=2")
-    print(f"  Positive rate: {label_arr.mean():.4f}")
+    label_arr = (df["label_type"].astype(int) == 2).astype("float32").values
+    print("  → 2→pos, 1→neg")
 
     # ============ STEP 3: Process all features (dict-based, no fragmentation) ============
     print("\n" + "=" * 60)
