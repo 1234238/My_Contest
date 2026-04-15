@@ -53,7 +53,7 @@ if __name__ == '__main__':
     data_dir = os.path.join(params['data_root'], params['dataset_id'])
     feature_map_json = os.path.join(data_dir, "feature_map.json")
 
-        # Build feature_map and transform data
+    # Build feature_map and transform data
     feature_encoder = FeatureProcessor(**params)
     params["train_data"], params["valid_data"], params["test_data"] = \
         build_dataset(feature_encoder, **params)
@@ -86,3 +86,8 @@ if __name__ == '__main__':
             .format(datetime.now().strftime('%Y%m%d-%H%M%S'), 
                     ' '.join(sys.argv), experiment_id, params['dataset_id'],
                     "N.A.", print_to_list(valid_result), print_to_list(test_result)))
+
+
+
+python -c "import pandas as pd; df = pd.read_parquet('/data/lc/FuxiCTR-main/data/datasets/taac_flat/taac2026/train.parquet'); print(df.head(10))"
+python -c "import pandas as pd; df = pd.read_parquet('/data/lc/FuxiCTR-main/data/datasets/taac_flat/train.parquet'); print(df.head(10))"

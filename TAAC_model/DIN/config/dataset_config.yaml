@@ -100,9 +100,9 @@ taac2026:
     - {name: domain_b_seq_88, active: true, dtype: str, type: sequence, splitter: "^", max_len: 50, padding: pre}
     # ===== Sequence (domain_c) — DIN 配对加 share_embedding =====
     - {name: domain_c_seq_27, active: true, dtype: str, type: sequence, splitter: "^", max_len: 50, padding: pre}
-    - {name: domain_c_seq_28, active: true, dtype: str, type: sequence, splitter: "^", max_len: 50, padding: pre}
+    - {name: domain_c_seq_28, active: true, dtype: str, type: sequence, splitter: "^", max_len: 50, padding: pre, feature_encoder: null, share_embedding: "item_int_feats_5"}
     - {name: domain_c_seq_29, active: true, dtype: str, type: sequence, splitter: "^", max_len: 50, padding: pre}
-    - {name: domain_c_seq_30, active: true, dtype: str, type: sequence, splitter: "^", max_len: 50, padding: pre}
+    - {name: domain_c_seq_30, active: true, dtype: str, type: sequence, splitter: "^", max_len: 50, padding: pre, feature_encoder: null, share_embedding: "item_int_feats_6"}
     - {name: domain_c_seq_31, active: true, dtype: str, type: sequence, splitter: "^", max_len: 50, padding: pre}
     - {name: domain_c_seq_32, active: true, dtype: str, type: sequence, splitter: "^", max_len: 50, padding: pre}
     - {name: domain_c_seq_33, active: true, dtype: str, type: sequence, splitter: "^", max_len: 50, padding: pre}
@@ -110,7 +110,7 @@ taac2026:
     - {name: domain_c_seq_35, active: true, dtype: str, type: sequence, splitter: "^", max_len: 50, padding: pre}
     - {name: domain_c_seq_36, active: true, dtype: str, type: sequence, splitter: "^", max_len: 50, padding: pre}
     - {name: domain_c_seq_37, active: true, dtype: str, type: sequence, splitter: "^", max_len: 50, padding: pre}
-    - {name: domain_c_seq_47, active: true, dtype: str, type: sequence, splitter: "^", max_len: 50, padding: pre}
+    - {name: domain_c_seq_47, active: true, dtype: str, type: sequence, splitter: "^", max_len: 50, padding: pre, feature_encoder: null, share_embedding: "item_id"}
     # ===== Sequence (domain_d) =====
     - {name: domain_d_seq_17, active: true, dtype: str, type: sequence, splitter: "^", max_len: 50, padding: pre}
     - {name: domain_d_seq_18, active: true, dtype: str, type: sequence, splitter: "^", max_len: 50, padding: pre}
