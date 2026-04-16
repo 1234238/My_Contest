@@ -89,5 +89,5 @@ if __name__ == '__main__':
 
 
 
-python -c "import pandas as pd; df = pd.read_parquet('/data/lc/FuxiCTR-main/data/datasets/taac_flat/taac2026/train.parquet'); print(df.head(10))"
-python -c "import pandas as pd; df = pd.read_parquet('/data/lc/FuxiCTR-main/data/datasets/taac_flat/train.parquet'); print(df.head(10))"
+# python -c "import pandas as pd; df = pd.read_parquet('/data/lc/FuxiCTR-main/data/datasets/taac_flat/taac2026/train.parquet'); print(df.head(10))"
+# python -c "import pandas as pd; df = pd.read_parquet('/data/lc/FuxiCTR-main/data/datasets/taac_flat/train.parquet'); print(df.head(10))"
