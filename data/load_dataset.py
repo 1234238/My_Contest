@@ -4,6 +4,10 @@ Dense float features stored as list<float32> natively in parquet.
 No h5 pretrained_emb — designed for custom FuxiCTR source modification.
 """
 
+## TODO: 增加NAN检测、缺失值如何处理、变长序列读取，尽量减少Padding的使用。
+
+
+
 import os
 import math
 import numpy as np
