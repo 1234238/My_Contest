@@ -78,10 +78,11 @@ class FeatureEmbeddingDict(nn.Module):
                     feat_dim = feature_spec.get("embedding_dim", embedding_dim)
                     if feature_spec.get("feature_encoder", None):
                         self.feature_encoders[feature] = self.get_feature_encoder(feature_spec["feature_encoder"])
-                    else:
-                        if feature_spec["type"] == "embedding": # add embedding projection
-                            pretrain_dim = feature_spec.get("pretrain_dim", feat_dim)
-                            self.feature_encoders[feature] = nn.Linear(pretrain_dim, feat_dim, bias=False)
+                    # else:
+                    #     if feature_spec["type"] == "embedding": # add embedding projection
+                    #         pretrain_dim = feature_spec.get("pretrain_dim", feat_dim)
+                    #         self.feature_encoders[feature] = nn.Linear(pretrain_dim, feat_dim, bias=False)
+
 
                 # Set embedding_layer according to share_embedding
                 if use_sharing and feature_spec.get("share_embedding") in self.embedding_layers:
@@ -188,7 +189,7 @@ class FeatureEmbeddingDict(nn.Module):
                 elif feature_spec["type"] == "sequence":
                     inp = inputs[feature].long()
                     embeddings = self.embedding_layers[feature](inp)
-                elif feature_spec["type"] == "embedding":
+                elif feature_spec["type"] == "embedding": # 实际上并没有做处理
                     inp = inputs[feature].float()
                     embeddings = self.embedding_layers[feature](inp)
                 else:

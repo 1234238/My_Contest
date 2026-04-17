@@ -100,7 +100,7 @@ class FeatureProcessor(object):
         for col in all_cols:
             name = col["name"]
             fill_na = None
-            if col["dtype"] in ["str", str]:
+            if col["dtype"] in ["str", str]: # TODO 缺失特征如何处理呢
                 fill_na = col.get("fill_na", "")
             elif col["dtype"] in ["int", int]:
                 fill_na = col.get("fill_na", 0)
@@ -235,8 +235,6 @@ class FeatureProcessor(object):
             self.feature_map.features[name]["feature_encoder"] = col["feature_encoder"]
         if "embedding_dim" in col:
             self.feature_map.features[name]["embedding_dim"] = col["embedding_dim"]
-        if "pretrain_dim" in col:
-            self.feature_map.features[name]["pretrain_dim"] = col["pretrain_dim"]
 
     def fit_categorical_col(self, col, col_series, min_categr_count=1, num_buckets=10):
         name = col["name"]

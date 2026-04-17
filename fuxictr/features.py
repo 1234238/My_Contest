@@ -111,7 +111,7 @@ class FeatureMap(object):
                 self.column_index[feature] = col_indexes
                 idx += feature_spec["max_len"]
             elif feature_spec["type"] == "embedding":
-                emb_dim = feature_spec["pretrain_dim"]
+                emb_dim = feature_spec["embedding_dim"]
                 col_indexes = [i + idx for i in range(emb_dim)]
                 self.column_index[feature] = col_indexes
                 idx += emb_dim

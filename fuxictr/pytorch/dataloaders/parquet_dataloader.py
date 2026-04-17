@@ -35,6 +35,7 @@ class ParquetDataset(Dataset):
 
     def load_data(self, data_path):
         df = pd.read_parquet(data_path)
+
         all_cols = list(self.feature_map.features.keys()) + self.feature_map.labels
         data_arrays = []
         for col in all_cols:
