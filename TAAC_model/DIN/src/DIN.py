@@ -87,8 +87,6 @@ class DIN(BaseModel):
         X = self.get_inputs(inputs)
 
         feature_emb_dict = self.embedding_layer(X)
-
-        print(X)
         for idx, (target_field, sequence_field) in enumerate(zip(self.din_target_field, 
                                                                  self.din_sequence_field)):
             target_emb = self.get_embedding(target_field, feature_emb_dict)
