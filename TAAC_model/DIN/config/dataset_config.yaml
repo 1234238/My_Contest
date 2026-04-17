@@ -22,7 +22,6 @@ taac2026:
     # - {name: user_dense_feats_91, active: true, dtype: float_list, type: embedding}
 
 
-
     - {name: user_id, active: true, dtype: str, type: categorical}
     - {name: item_id, active: true, dtype: str, type: categorical}
     - {name: user_int_feats_1, active: true, dtype: str, type: categorical}
