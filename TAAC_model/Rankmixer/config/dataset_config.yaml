@@ -1,5 +1,5 @@
 taac2026:
-  data_root: /data/lc/FuxiCTR-main/data/datasets/taac_flat/
+  data_root: /data/lc/FuxiCTR-main/TAAC_model/Rankmixer/data/datasets/taac_flat/
   data_format: parquet
   train_data: /data/lc/FuxiCTR-main/data/datasets/taac_flat/train.parquet
   valid_data: /data/lc/FuxiCTR-main/data/datasets/taac_flat/valid.parquet
