@@ -55,12 +55,17 @@ if __name__ == '__main__':
 
     # Build feature_map and transform data
     feature_encoder = FeatureProcessor(**params)
+
     params["train_data"], params["valid_data"], params["test_data"] = \
         build_dataset(feature_encoder, **params)
     
     feature_map = FeatureMap(params['dataset_id'], data_dir)
     feature_map.load(feature_map_json, params)
     logging.info("Feature specs: " + print_to_json(feature_map.features))
+    
+    
+    if any(spec.get("type") == "dense_seq" for spec in feature_map.features.values()):
+        params["data_loader"] = src.TAACParquetDataLoader
     
     model_class = getattr(src, params['model'])
     model = model_class(feature_map, **params)

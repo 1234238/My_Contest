@@ -17,7 +17,6 @@
 
 import torch
 from torch import nn
-import numpy as np
 from pandas.core.common import flatten
 from fuxictr.pytorch.models import BaseModel
 from fuxictr.pytorch.layers import FeatureEmbeddingDict, MLP_Block, DIN_Attention, Dice
@@ -62,6 +61,10 @@ class DIN(BaseModel):
             dnn_activations = [Dice(units) for units in dnn_hidden_units]
         self.feature_map = feature_map
         self.embedding_dim = embedding_dim
+        self.dense_seq_fields = [
+            feature for feature, feature_spec in self.feature_map.features.items()
+            if feature_spec["type"] == "dense_seq"
+        ]
         self.embedding_layer = FeatureEmbeddingDict(feature_map, embedding_dim)
         self.attention_layers = nn.ModuleList(
             [DIN_Attention(embedding_dim * len(target_field) if type(target_field) == tuple \
@@ -72,7 +75,7 @@ class DIN(BaseModel):
                            dropout_rate=attention_dropout,
                            use_softmax=din_use_softmax)
              for target_field in self.din_target_field])
-        self.dnn = MLP_Block(input_dim=feature_map.sum_emb_out_dim(),
+        self.dnn = MLP_Block(input_dim=feature_map.sum_emb_out_dim() + len(self.dense_seq_fields) * 3,
                              output_dim=1,
                              hidden_units=dnn_hidden_units,
                              hidden_activations=dnn_activations,
@@ -87,6 +90,7 @@ class DIN(BaseModel):
         X = self.get_inputs(inputs)
 
         feature_emb_dict = self.embedding_layer(X)
+
         for idx, (target_field, sequence_field) in enumerate(zip(self.din_target_field, 
                                                                  self.din_sequence_field)):
             target_emb = self.get_embedding(target_field, feature_emb_dict)
@@ -99,9 +103,39 @@ class DIN(BaseModel):
                                         pooling_emb.split(self.embedding_dim, dim=-1)):
                 feature_emb_dict[field] = field_emb
         feature_emb = self.embedding_layer.dict2tensor(feature_emb_dict, flatten_emb=True)
+        dense_side_emb = self.get_dense_sideinfo(X, inputs)
+        if dense_side_emb is not None: # 没有和init显示的对齐，加入一般会掉点
+            feature_emb = torch.cat([feature_emb, dense_side_emb], dim=-1)
         y_pred = self.dnn(feature_emb)
         return_dict = {"y_pred": y_pred}
         return return_dict
+
+    def get_dense_sideinfo(self, X, inputs):
+        if not self.dense_seq_fields:
+            return None
+        dense_stats = []
+        for dense_field in self.dense_seq_fields:
+            if dense_field not in X:
+                continue
+            dense_seq = X[dense_field].float()
+            dense_mask = inputs.get(f"{dense_field}__mask")
+            if dense_mask is None:
+                dense_mask = ~torch.isnan(dense_seq)
+            else:
+                dense_mask = dense_mask.to(dense_seq.device)
+            dense_value = torch.nan_to_num(dense_seq, nan=0.0)
+            dense_value = torch.sign(dense_value) * torch.log1p(torch.abs(dense_value))
+            mask = dense_mask.float()
+            valid_len = mask.sum(dim=1, keepdim=True)
+            mean_val = (dense_value * mask).sum(dim=1, keepdim=True) / valid_len.clamp_min(1.0)
+            last_val = torch.where(valid_len > 0,
+                                   dense_value[:, -1:],
+                                   torch.zeros_like(dense_value[:, -1:]))
+            len_val = torch.log1p(valid_len)
+            dense_stats.append(torch.cat([mean_val, last_val, len_val], dim=-1))
+        if not dense_stats:
+            return None
+        return torch.cat(dense_stats, dim=-1)
 
     def get_embedding(self, field, feature_emb_dict):
         if type(field) == tuple:

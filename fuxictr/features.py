@@ -83,7 +83,7 @@ class FeatureMap(object):
             feature_source = [feature_source]
         num_fields = 0
         for feature, feature_spec in self.features.items():
-            if feature_spec["type"] == "meta":
+            if feature_spec["type"] in ["meta", "dense_seq"]:
                 continue
             if len(feature_source) == 0 or feature_spec.get("source") in feature_source:
                 num_fields += 1
@@ -94,7 +94,7 @@ class FeatureMap(object):
             feature_source = [feature_source]
         total_dim = 0
         for feature, feature_spec in self.features.items():
-            if feature_spec["type"] == "meta":
+            if feature_spec["type"] in ["meta", "dense_seq"]:
                 continue
             if len(feature_source) == 0 or feature_spec.get("source") in feature_source:
                 total_dim += feature_spec.get("emb_output_dim",
@@ -106,6 +106,8 @@ class FeatureMap(object):
         logging.info("Set column index...")
         idx = 0
         for feature, feature_spec in self.features.items():
+            if feature_spec["type"] == "dense_seq":
+                continue
             if feature_spec["type"] == "sequence":
                 col_indexes = [i + idx for i in range(feature_spec["max_len"])]
                 self.column_index[feature] = col_indexes

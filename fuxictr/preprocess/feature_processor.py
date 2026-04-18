@@ -147,6 +147,8 @@ class FeatureProcessor(object):
                     self.fit_numeric_col(col, col_series)
                 elif col["type"] == "embedding":
                     self.fit_embedding_col(col)
+                elif col["type"] == "dense_seq":
+                    self.fit_dense_seq_col(col)
                 elif col["type"] == "categorical":
                     self.fit_categorical_col(col, col_series,
                                              min_categr_count=min_categr_count,
@@ -233,6 +235,19 @@ class FeatureProcessor(object):
                                            "type": feature_type}
         if "feature_encoder" in col:
             self.feature_map.features[name]["feature_encoder"] = col["feature_encoder"]
+        if "embedding_dim" in col:
+            self.feature_map.features[name]["embedding_dim"] = col["embedding_dim"]
+
+    def fit_dense_seq_col(self, col):
+        name = col["name"]
+        feature_type = col["type"]
+        feature_source = col.get("source", "")
+        self.feature_map.features[name] = {"source": feature_source,
+                                           "type": feature_type}
+        if "paired_with" in col:
+            self.feature_map.features[name]["paired_with"] = col["paired_with"]
+        if "max_len" in col:
+            self.feature_map.features[name]["max_len"] = col["max_len"]
         if "embedding_dim" in col:
             self.feature_map.features[name]["embedding_dim"] = col["embedding_dim"]
 
@@ -362,7 +377,7 @@ class FeatureProcessor(object):
                 elif feature_type == "sequence":
                     ddf[feature] = (self.processor_dict.get(feature + "::tokenizer")
                                     .encode_sequence(col_series))
-                elif feature_type == "embedding":
+                elif feature_type in ["embedding", "dense_seq"]:
                     continue
                 else:
                     raise NotImplementedError

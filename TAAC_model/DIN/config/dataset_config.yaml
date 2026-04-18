@@ -21,6 +21,15 @@ taac2026:
     # - {name: user_dense_feats_90, active: true, dtype: float_list, type: embedding}
     # - {name: user_dense_feats_91, active: true, dtype: float_list, type: embedding}
 
+    - {name: user_dense_feats_62, active: true, dtype: object, type: dense_seq, paired_with: user_int_feats_62, max_len: 50}
+    - {name: user_dense_feats_63, active: true, dtype: object, type: dense_seq, paired_with: user_int_feats_63, max_len: 50}
+    - {name: user_dense_feats_64, active: true, dtype: object, type: dense_seq, paired_with: user_int_feats_64, max_len: 50}
+    - {name: user_dense_feats_65, active: true, dtype: object, type: dense_seq, paired_with: user_int_feats_65, max_len: 50}
+    - {name: user_dense_feats_66, active: true, dtype: object, type: dense_seq, paired_with: user_int_feats_66, max_len: 50}
+    - {name: user_dense_feats_89, active: true, dtype: object, type: dense_seq, paired_with: user_int_feats_89, max_len: 50}
+    - {name: user_dense_feats_90, active: true, dtype: object, type: dense_seq, paired_with: user_int_feats_90, max_len: 50}
+    - {name: user_dense_feats_91, active: true, dtype: object, type: dense_seq, paired_with: user_int_feats_91, max_len: 50}
+
 
     - {name: user_id, active: true, dtype: str, type: categorical}
     - {name: item_id, active: true, dtype: str, type: categorical}
