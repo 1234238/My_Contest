@@ -22,10 +22,10 @@ from fuxictr.pytorch.models import BaseModel
 from fuxictr.pytorch.layers import FeatureEmbeddingDict, MLP_Block, DIN_Attention, Dice
 
 
-class DIN(BaseModel):
+class RankMixer(BaseModel):
     def __init__(self, 
                  feature_map, 
-                 model_id="DIN", 
+                 model_id="RankMixer", 
                  gpu=-1, 
                  dnn_hidden_units=[512, 128, 64],
                  dnn_activations="ReLU",
@@ -43,7 +43,7 @@ class DIN(BaseModel):
                  embedding_regularizer=None, 
                  net_regularizer=None,
                  **kwargs):
-        super(DIN, self).__init__(feature_map,
+        super(RankMixer, self).__init__(feature_map,
                                   model_id=model_id, 
                                   gpu=gpu, 
                                   embedding_regularizer=embedding_regularizer, 
