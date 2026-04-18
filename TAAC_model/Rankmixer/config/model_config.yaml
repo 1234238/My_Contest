@@ -1,5 +1,6 @@
-DIN_taac2026:
-    model: DIN
+
+DIN_RankMixer_taac2026:
+    model: RankMixer
     dataset_id: taac2026
     loss: 'binary_crossentropy'
     metrics: ['logloss', 'AUC']
@@ -16,14 +17,11 @@ DIN_taac2026:
     attention_hidden_activations: "Dice"
     attention_output_activation: null
     attention_dropout: 0
-    # ====== 核心：target 和 sequence 必须一一配对 ======
     din_target_field: [item_id, item_int_feats_5, item_int_feats_6]
     din_sequence_field: [domain_c_seq_47, domain_c_seq_28, domain_c_seq_30]
-    # din_target_field: []
-    # din_sequence_field: []
-    ## 0.80 0.77 0.789773 0.776515 7717
-
     din_use_softmax: False
+    rankmixer_layers: 2
+    rankmixer_ffn_ratio: 2
     net_dropout: 0.1
     batch_norm: False
     epochs: 10
@@ -31,9 +29,6 @@ DIN_taac2026:
     seed: 2019
     monitor: {'AUC': 1, 'logloss': -1}
     monitor_mode: 'max'
-
-
-    # ====== 从 Base 补上的参数 ======
     model_root: './checkpoints/'
     num_workers: 3
     verbose: 1
